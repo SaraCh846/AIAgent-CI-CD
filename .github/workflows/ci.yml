@@ -64,3 +64,39 @@ jobs:
       - name: Pull latest Docker image
         shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
         run: docker pull ghcr.io/sarach846/aiagent-ci-cd:latest
+
+      
+      - name: Deploy AI Agent on Windows
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -File {0}
+        run: |
+          $envFile = "C:\Users\User\Downloads\AIAgent-Docker\.env"
+
+          if (-not (Test-Path $envFile)) {
+            throw "Local .env file not found"
+          }
+
+          $existing = docker ps -aq --filter "name=^/aiagent-app$"
+
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+          if ($existing) {
+            docker rm -f aiagent-app
+            if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+            }
+          }
+
+          docker run -d --platform linux/amd64 --name aiagent-app `
+            -p 127.0.0.1:8000:8000 `
+            --env-file $envFile `
+            ghcr.io/sarach846/aiagent-ci-cd:latest
+
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+          docker exec aiagent-app python manage.py migrate
+          exit $LASTEXITCODE
+  
