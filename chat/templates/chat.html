@@ -4,6 +4,7 @@
     <title>Inventory Agent</title>
     <style>
         body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+        h2 { color: green;}
         .msg { padding: 10px 14px; margin: 8px 0; border-radius: 10px; }
         .user { background: #dceeff; text-align: right; }
         .agent { background: #eee; }
@@ -14,7 +15,7 @@
 </head>
 <body>
 
-<h2 style="color: purple;">Inventory Agent - CI/CD Demo</h2>
+<h2>Inventory Agent - CI/CD Demo</h2>
 
 {% for message in history %}
     <div class="msg {{ message.role }}">{{ message.text }}</div>
